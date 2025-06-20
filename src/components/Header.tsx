@@ -1,4 +1,4 @@
-// components/Header.tsx
+// // components/Header.tsx
 
 'use client';
 
@@ -11,19 +11,23 @@ interface HeaderProps {
 
 const Header = ({ onProfileClick }: HeaderProps) => {
   return (
-    <header 
+    <header
       className="fixed top-0 left-0 right-0 z-30 h-12 flex items-center justify-between px-4"
       style={{ backgroundColor: 'var(--sidebar-bg)' }}
     >
-      {/* Left side - Profile Picture */}
+      {/* Left side - Profile Picture and Name */}
       <button
         onClick={onProfileClick}
-        className="p-1 rounded-full hover:ring-2 hover:ring-gray-500 transition-all"
+        className="flex items-center space-x-3 p-1 rounded-lg hover:bg-gray-800 transition-all"
         aria-label="Open menu"
       >
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white font-semibold text-sm">
+        <div className="pt w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white font-semibold text-sm">
           RM
         </div>
+        {/* Show name only on large screens */}
+        <span className="hidden lg:block text-white font-medium">
+          Rudra Mohanty
+        </span>
       </button>
 
       {/* Right side - Brand */}

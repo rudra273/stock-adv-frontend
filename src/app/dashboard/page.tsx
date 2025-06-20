@@ -29,8 +29,7 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen text-white p-6" style={{ backgroundColor: 'var(--background)' }}>
-      <h1 className="text-xl font-bold mb-8">Dashboard</h1>
+    <div className="min-h-screen text-white p-2" style={{ backgroundColor: 'var(--background)' }}>
       
       {/* Market Index Section */}
       <section className="mb-8">
