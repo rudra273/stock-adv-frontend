@@ -1,4 +1,4 @@
-// src/lib/market_index.ts
+// src/lib/MarketSentiment.ts
 import { apiClient } from './api';
 
 

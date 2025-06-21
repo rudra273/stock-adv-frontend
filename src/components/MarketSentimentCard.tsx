@@ -1,7 +1,8 @@
 // components/MarketIndexCard.tsx
+
 import React from 'react';
 
-interface MarketIndexCardProps {
+interface MarketSentimentProps {
   source: string;
   score: number;
   lastUpdated: string;
@@ -28,7 +29,7 @@ const Arc: React.FC<{ startScore: number; endScore: number; color: string }> = (
   return <path d={pathData} fill="none" stroke={color} strokeWidth="12" />;
 };
 
-const MarketIndexCard: React.FC<MarketIndexCardProps> = ({
+const MarketIndexCard: React.FC<MarketSentimentProps> = ({
   source,
   score,
   lastUpdated
