@@ -7,7 +7,9 @@ import MarketIndexCard from '@/components/MarketSentimentCard';
 import MarketStockCard from '@/components/IndexCard';
 import NewsDashboard from '@/components/NewsDashboard';
 import StockTable from '@/components/StockTable';
+import TopMovers from '@/components/TopMovers';
 import { MarketSentiment, MarketIndexService } from '@/lib/MarketSentiment';
+import { IndexInfo, IndexInfoService } from '@/lib/IndexInfo';
 
 // Simplified interface for navigation - only need symbol
 export interface StockDataForNavigation {
@@ -19,6 +21,9 @@ export default function Dashboard() {
   const [marketData, setMarketData] = useState<MarketSentiment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [indexData, setIndexData] = useState<IndexInfo[]>([]);
+  const [indexLoading, setIndexLoading] = useState(true);
+  const [indexError, setIndexError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchMarketData = async () => {
@@ -35,29 +40,28 @@ export default function Dashboard() {
       }
     };
 
+    const fetchIndexData = async () => {
+      try {
+        setIndexLoading(true);
+        const data = await IndexInfoService.getIndexInfo();
+        setIndexData(data);
+        setIndexError(null);
+      } catch (err) {
+        setIndexError('Failed to fetch index info');
+        console.error('Error fetching index info:', err);
+      } finally {
+        setIndexLoading(false);
+      }
+    };
+
     fetchMarketData();
+    fetchIndexData();
   }, []);
 
   // Simplified function to handle stock click - only passes symbol
   const handleStockClick = (stockData: StockDataForNavigation) => {
     router.push(`/stock/${stockData.symbol}`);
   };
-
-  // Static data for stock cards - replace with API data later
-  const stockData = [
-    {
-      name: "NIFTY 50",
-      currentValue: 19834.50,
-      change: 152.40,
-      changePercentage: 0.77
-    },
-    {
-      name: "SENSEX",
-      currentValue: 66588.93,
-      change: 361.75,
-      changePercentage: 0.55
-    }
-  ];
 
   return (
     <div className="min-h-screen text-white p-2" style={{ backgroundColor: 'var(--background)' }}>
@@ -107,22 +111,37 @@ export default function Dashboard() {
               
               {/* Right child - Stock cards (1/4 width) stacked vertically */}
               <div className="w-48 flex flex-col gap-4 h-full">
-                {stockData.map((stock) => (
-                  <div key={stock.name} className="flex-1">
-                    <MarketStockCard
-                      name={stock.name}
-                      currentValue={stock.currentValue}
-                      change={stock.change}
-                      changePercentage={stock.changePercentage}
-                    />
-                  </div>
-                ))}
+                {indexLoading && (
+                  <div className="flex justify-center items-center h-full text-gray-400">Loading indices...</div>
+                )}
+                {indexError && (
+                  <div className="flex justify-center items-center h-full text-red-400">{indexError}</div>
+                )}
+                {!indexLoading && !indexError && indexData.length > 0 && (
+                  indexData.map((index) => (
+                    <div key={index.symbol} className="flex-1">
+                      <MarketStockCard
+                        name={index.shortName}
+                        currentValue={index.currentPrice}
+                        change={index.Change}
+                        changePercentage={index.PercentChange}
+                      />
+                    </div>
+                  ))
+                )}
+                {!indexLoading && !indexError && indexData.length === 0 && (
+                  <div className="flex justify-center items-center h-full text-gray-400">No index data available</div>
+                )}
               </div>
               
             </div>
             {/* Stock Table - positioned between gauge meters and news */}
             <div className="w-full mt-6">
               <StockTable className="w-full" onStockClick={handleStockClick} />
+              {/* Top Movers below Stock Table */}
+              <div className="mt-8">
+                <TopMovers />
+              </div>
             </div>
           </div>
           

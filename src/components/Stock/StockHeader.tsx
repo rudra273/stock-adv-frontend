@@ -1,7 +1,8 @@
 // src/components/Stock/StockHeader.tsx
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import { Bookmark } from 'lucide-react';
 
 interface StockHeaderProps {
   symbol: string;
@@ -20,41 +21,40 @@ export default function StockHeader({
 }: StockHeaderProps) {
   const isPositive = priceChange >= 0;
 
+  // Add local state for bookmark
+  const [bookmarked, setBookmarked] = useState(false);
+
   return (
-    <div className="flex justify-between items-start mb-6 p-4 rounded-lg" style={{ backgroundColor: 'var(--sidebar-bg)', border: '1px solid var(--border-color)' }}>
+    <div className="flex justify-between items-start mb-6 p-4 rounded-lg" style={{ backgroundColor: 'var(--sidebar-bg)' }}>
       <div>
-        <h1 className="text-2xl font-bold text-white mb-2">
-          {companyName} ({symbol})
+        <h1 className="text-lg font-bold text-white mb-1">
+          {companyName.charAt(0).toUpperCase() + companyName.slice(1).toLowerCase()}
         </h1>
-        <div className="flex items-center gap-4">
-          <span className="text-3xl font-bold text-white">
-            ${currentPrice.toFixed(2)}
+        <div className="flex items-center gap-3">
+          <span className="text-xl font-bold text-white">
+            ₹{currentPrice.toFixed(2)}
           </span>
-          <div className="flex items-center gap-2">
-            <span className={`text-lg font-semibold ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
+          <div className="flex items-center gap-1.5">
+            <span className={`text-base font-semibold ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
               {isPositive ? '+' : ''}{priceChange.toFixed(2)}
             </span>
-            <span className={`text-lg font-semibold ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
+            <span className={`text-base font-semibold ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
               ({isPositive ? '+' : ''}{percentageChange.toFixed(2)}%)
             </span>
           </div>
         </div>
       </div>
       
-      <button 
-        className="px-4 py-2 rounded-lg font-medium transition-colors"
-        style={{ 
-          backgroundColor: 'var(--accent-green)', 
-          color: 'white',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.opacity = '0.8';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.opacity = '1';
-        }}
+      <button
+        aria-label="Bookmark"
+        className="transition-colors"
+        onClick={() => setBookmarked((prev) => !prev)}
       >
-        Add to Watchlist
+        <Bookmark
+          size={28}
+          fill={bookmarked ? '#10b981' : 'none'}
+          color={bookmarked ? '#10b981' : 'currentColor'}
+        />
       </button>
     </div>
   );

@@ -1,4 +1,3 @@
-
 // src/app/stock/[symbol]/page.tsx
 'use client';
 
@@ -6,8 +5,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import StockHeader from '@/components/Stock/StockHeader';
 import StockGraph from '@/components/Stock/StockGraph';
+import ActionButton from '@/components/UI/ActionButton';
 import { CurrentPrice, CurrentPriceService } from '@/lib/current_price';
-
+import NewsDashboard from '@/components/NewsDashboard';
+import FinancialsSection from '@/components/Stock/FinancialsSection';
 
 export default function StockPage() {
   const params = useParams();
@@ -26,17 +27,6 @@ export default function StockPage() {
       } catch (err) {
         setError('Failed to fetch stock data');
         console.error('Error fetching stock data:', err);
-        
-        // Fallback to mock data if API fails
-        const mockStockData: CurrentPrice = {
-          symbol: symbol,
-          companyName: symbol === 'TCS.NS' ? 'Tata Consultancy Services' : 'Company Name',
-          currentPrice: 3765.71,
-          previousClose: 3720.56,
-          Change: 45.15,
-          PercentChange: 1.23
-        };
-        setStockData(mockStockData);
       } finally {
         setLoading(false);
       }
@@ -72,17 +62,51 @@ export default function StockPage() {
   }
 
   return (
-    <div className="min-h-screen text-white p-6" style={{ backgroundColor: 'var(--background)' }}>
+    <div className="min-h-screen text-white p-2" style={{ backgroundColor: 'var(--background)' }}>
       <div className="max-w-6xl mx-auto">
-        <StockHeader
-          symbol={stockData.symbol}
-          companyName={stockData.companyName}
-          currentPrice={stockData.currentPrice}
-          priceChange={stockData.Change}
-          percentageChange={stockData.PercentChange}
-        />
-        
-        <StockGraph symbol={symbol} />
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Left: Stock details */}
+          <div className="flex-1">
+            
+            <div className="mb-8">
+              <StockHeader
+                symbol={stockData.symbol}
+                companyName={stockData.companyName}
+                currentPrice={stockData.currentPrice}
+                priceChange={stockData.Change}
+                percentageChange={stockData.PercentChange}
+              />
+            </div>
+            
+            <div className="mb-6">
+              <StockGraph symbol={stockData.symbol} />
+            </div>
+            
+            {/* Action Buttons */}
+            <div className="flex gap-4 mb-6">
+              <ActionButton 
+                variant="primary"
+                href="/technical-analysis"
+                symbol={symbol}
+              >
+                Run Technical Analysis
+              </ActionButton>
+              <ActionButton 
+                variant="secondary"
+                href="/research"
+                symbol={symbol}
+              >
+                Run News Research
+              </ActionButton>
+            </div>
+            <FinancialsSection symbol={symbol} />
+          </div>
+          
+          {/* Right: News Dashboard */}
+          <div className="w-full lg:w-80 xl:w-96">
+            <NewsDashboard />
+          </div>
+        </div>
       </div>
     </div>
   );
